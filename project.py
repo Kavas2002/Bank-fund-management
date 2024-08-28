@@ -137,14 +137,8 @@ l3 = [str(x.che_ac),str(x.che_amt),str(x.che_ac),str(x.che_amt),str(x.che_ac),st
 w1.write(str(l1))
 w2.write(str(l2))
 w3.write(str(l3))
-print(x.che_ac)
-print(x.che_amt)
-print(x.tn_ac)
-print(x.tn_amt)
-print(x.sbi_ac)
-print(x.sbi_amt)
-print(x.rbi_ac)
-print(x.rbi_amt)
+print(x.acc_details)
+print(x.acc_bal)
 
 
 
