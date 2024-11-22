@@ -43,11 +43,20 @@ def Login():
             gen_otp = 23456
             print(f"you otp is {gen_otp}")
             otp = int(input("enter the otp : "))
-            if gen_otp == otp :
-                deposit(Account_num)
+            if gen_otp == otp:
+                print(" 1 - deposit\n 2 - withdrawal \n 3 - Account_closing ")
+                using_or_not = int(input("read above message before make action"))
+                if using_or_not == 1:
+                    deposit(Account_num)
+                elif using_or_not == 2:
+                    Withdrawal()
+                elif using_or_not == 3:
+                    Account_closing()
+                else:
+                    WelcomeUser()
             else:
                 print("incorrect")
-        elif userid != a or password != b:
+        elif userid != fetch_user_id  or password != fetch_pass_word:
             print("userid and password are not matching")
 def AccountCreate():
     DOB = input("enter your date of birth dd-mm-yyyy : ")
@@ -88,6 +97,13 @@ def AccountCreate():
         acc_details = (Account_No,userid,initial_deposit,created_date)
         db_object.execute(query,customer_details)
         db_object.execute(query2,acc_details)
+        print(f"your Account has been created Account_no : {Account_no}")
+        print(" 1 - Login to your account\n 2 - closing ")
+        login_or_not = int(input("read the above message before make action "))
+        if login_or_not == 1:
+            Login()
+        else:
+            WelcomeUser()
 def deposit(Account_num):
     balance_query = f"select balance from account where Account_no = {Account_num}"
     db_object.execute(balance_query)
@@ -101,6 +117,66 @@ def deposit(Account_num):
                                 where Account_no = {Account_num}
                             """
     db_object.execute(update_balance_query)
+def Withdrawal(Account_num):
+    withdrawal_query = f"select balance from account where Account_no = {Account_num}"
+    db_object.execute(withdrawal_query)
+    w_balance_amt = db_object.fetchall()
+    w_balance = float(w_balance_amt[0][0])
+    withdraw_purpose = int(input("   Action \n1 - Normal_withdraw\n2 - for Account Closing"))
+    print(f"Your Balance id {w_balance}")
+    withdraw_amt = float(input("Enter the amount:"))
+    if withdraw_purpose == 1:
+        if w_balance - withdraw_amt < 500:
+            print(f"you can withdraw {w_balance - 500}")
+        else:
+            w_balance -= withdraw_amt
+    elif withdraw_purpose == 2:
+        w_balance -= withdraw_amt
+        
+    else:
+        print(" BYE BYE ✌️✌️")
+    withdrawal_update_query = f"update account set balance = {w_balance} where Account_no = {Account_num}"
+    db_object.execute(withdrawal_update_query)
+def Account_closing():
+    Account_num = int(input("enter the account number"))
+    query  =f"""select a.Account_no,c.customerid,c.password,c.Email,a.balance
+                from customer c
+                join account a
+                on c.customerid = a.customer_id
+                where a.Account_no ={Account_num} ;"""
+    db_object.execute(query)
+    closing_auth_details= db_object.fetchall()
+    try:
+        fetch_user_id = closing_auth_details[0][1]
+        fetch_pass_word = closing_auth_details[0][2]
+    except IndexError as IE:
+        print(f"This because your Account_NO {Account_num} not found")
+    else:
+        userid = input("enter the userid : ")
+        password = input("enter the password")
+        if userid == fetch_user_id and password == fetch_pass_word:
+            gen_otp = 23456
+            print(f"you otp is {gen_otp}")
+            otp = int(input("enter the otp : "))
+            if gen_otp == otp:
+                w_balance = float(closing_auth_details[0][4])
+                if w_balance != 0.00:
+                    print(f"your balance is {w_balance}")
+                    print("TO close your account should be zero\n 1 - to withdrawal amount\n 2 - back to login")
+                    closing_or_not = int(input("read the above message before make action : "))
+                    if closing_or_not == 1:
+                        Withdrawal(Account_num)
+                    elif closing_or_not == 2:
+                        Login()    
+            else:
+                print("incorrect")
+        elif userid != fetch_user_id or password != fetch_pass_word:
+            print("userid and password are not matching")
+    
+
+    
+
+    
 
 
     
@@ -111,12 +187,14 @@ def deposit(Account_num):
 
 def WelcomeUser():
     print("WELCOME TO THE BANK")
-    print("    ACTION\n1 - login\n2 - new user\n3 - Exit")
+    print("    ACTION\n1 - login\n2 - new user\n3 - Accountclosing")
     action = int(input("Enter the action : "))
     if action == 1:
         Login()
     elif action == 2:
         AccountCreate()
+    elif action == 3:
+        Account_closing()
     else:
         print(exit)
 
