@@ -102,38 +102,6 @@ class Bank():
                 self.Login()
             else:
                 self.WelcomeUser()
-    def deposit(self,Account_num):
-        balance_query = f"select balance from account where Account_no = {Account_num}"
-        db_object.execute(balance_query)
-        acc_balance = db_object.fetchall()
-        balance_amt = float(acc_balance[0][0])
-        print(f"Account Balance is {balance_amt}")
-        deposit_amt = float(input("Enter the Amount : "))
-        balance_amt+=deposit_amt
-        update_balance_query = f""" update account 
-                                    set balance = {balance_amt}
-                                    where Account_no = {Account_num}
-                                """
-        db_object.execute(update_balance_query)
-    def Withdrawal(self,Account_num):
-        withdrawal_query = f"select balance from account where Account_no = {Account_num}"
-        db_object.execute(withdrawal_query)
-        w_balance_amt = db_object.fetchall()
-        w_balance = float(w_balance_amt[0][0])
-        withdraw_purpose = int(input("   Action \n1 - Normal_withdraw\n2 - for Account Closing"))
-        print(f"Your Balance id {w_balance}")
-        withdraw_amt = float(input("Enter the amount:"))
-        if withdraw_purpose == 1:
-            if w_balance - withdraw_amt < 500:
-                print(f"you can withdraw {w_balance - 500}")
-            else:
-                w_balance -= withdraw_amt
-        elif withdraw_purpose == 2:
-            w_balance -= withdraw_amt   
-        else:
-            print(" BYE BYE ✌️✌️")
-        withdrawal_update_query = f"update account set balance = {w_balance} where Account_no = {Account_num}"
-        db_object.execute(withdrawal_update_query)
     def Account_closing(self):
         Account_num = int(input("enter the account number"))
         query  =f"""select a.Account_no,c.customerid,c.password,c.Email,a.balance
@@ -169,7 +137,39 @@ class Bank():
                     print("incorrect")
             elif userid != fetch_user_id or password != fetch_pass_word:
                 print("userid and password are not matching")
-
+    def deposit(self,Account_num):
+        balance_query = f"select balance from account where Account_no = {Account_num}"
+        db_object.execute(balance_query)
+        acc_balance = db_object.fetchall()
+        balance_amt = float(acc_balance[0][0])
+        print(f"Account Balance is {balance_amt}")
+        deposit_amt = float(input("Enter the Amount : "))
+        balance_amt+=deposit_amt
+        update_balance_query = f""" update account 
+                                    set balance = {balance_amt}
+                                    where Account_no = {Account_num}
+                                """
+        db_object.execute(update_balance_query)
+    def Withdrawal(self,Account_num):
+        withdrawal_query = f"select balance from account where Account_no = {Account_num}"
+        db_object.execute(withdrawal_query)
+        w_balance_amt = db_object.fetchall()
+        w_balance = float(w_balance_amt[0][0])
+        withdraw_purpose = int(input("   Action \n1 - Normal_withdraw\n2 - for Account Closing"))
+        print(f"Your Balance id {w_balance}")
+        withdraw_amt = float(input("Enter the amount:"))
+        if withdraw_purpose == 1:
+            if w_balance - withdraw_amt < 500:
+                print(f"you can withdraw {w_balance - 500}")
+            else:
+                w_balance -= withdraw_amt
+        elif withdraw_purpose == 2:
+            w_balance -= withdraw_amt   
+        else:
+            print(" BYE BYE ✌️✌️")
+        withdrawal_update_query = f"update account set balance = {w_balance} where Account_no = {Account_num}"
+        db_object.execute(withdrawal_update_query)
+    
 work = Bank()
 work.WelcomeUser()
 db.commit()
